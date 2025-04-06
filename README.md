@@ -1,16 +1,15 @@
-# ME5413_Final_Project
+# ME5413_Final_Project_Group9
 
 NUS ME5413 Autonomous Mobile Robotics Final Project
-> Authors: [Christina](https://github.com/ldaowen), [Ziggy](https://github.com/ziggyhuang), [Dongen](https://github.com/nuslde), and [Shuo](https://github.com/SS47816)
+
+> Authors: Group9, [Liu Xiao](https://github.com/llliuxiao), [Ren Teng](https://github.com/1425T), [Liu Chen-an](https://github.com/songs-for-you), [Hao Yuzhi](https://github.com/carveshadow), [Li Shuo](https://github.com/YokeLiLee) and [Levi](https://github.com/RicardoCDUT)  
 
 ![Ubuntu 20.04](https://img.shields.io/badge/OS-Ubuntu_20.04-informational?style=flat&logo=ubuntu&logoColor=white&color=2bbc8a)
 ![ROS Noetic](https://img.shields.io/badge/Tools-ROS_Noetic-informational?style=flat&logo=ROS&logoColor=white&color=2bbc8a)
 ![C++](https://img.shields.io/badge/Code-C++-informational?style=flat&logo=c%2B%2B&logoColor=white&color=2bbc8a)
 ![Python](https://img.shields.io/badge/Code-Python-informational?style=flat&logo=Python&logoColor=white&color=2bbc8a)
-![GitHub Repo stars](https://img.shields.io/github/stars/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
-![GitHub Repo forks](https://img.shields.io/github/forks/NUS-Advanced-Robotics-Centre/ME5413_Final_Project?color=FFE333)
 
-![cover_image](src/me5413_world/media/gz_world.png)
+![cover_image](media/gz_world.png)
 
 ## Dependencies
 
@@ -38,7 +37,14 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
   * `jackal_navigation`
   * `velodyne_simulator`
   * `teleop_twist_keyboard`
+  * `teleop_twist_joystick`
 * And this [gazebo_model](https://github.com/osrf/gazebo_models) repositiory
+
+## Important Note Before Your Coding !!!
+
+- **Unless you find significant bug in the main or master branch, do not push to them, please checkout you own branch, like dev-lx.**
+- **Do not upload any large files(Not including your code). If necessary, please upload to your GoogleDrive or OneDrive and update README.**
+- **Updata your Notion Page in time.**
 
 ## Installation
 
@@ -52,19 +58,32 @@ This repo is a ros workspace, containing three rospkgs:
 
 After forking this repo to your own github:
 
+**Using [Clion](https://www.jetbrains.com/clion/) would be better**
+
 ```bash
 # Clone your own fork of this repo (assuming home here `~/`)
-cd
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/ME5413_Final_Project.git
+git clone --recurse-submodules https://github.com/ME5413-Group9-2025/ME5413_Final_Project.git
 cd ME5413_Final_Project
 
+# Install python packages
+pip install opencv-python
+pip install torch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 --index-url https://download.pytorch.org/whl/cu121
+pip install transformers==4.46.3
+
 # Install all dependencies
+rosdep update
 rosdep install --from-paths src --ignore-src -r -y
+sudo apt-get remove ros-noetic-abseil-cpp
+sh src/cartographer/scripts/install_abseil.sh
 
 # Build
-catkin_make
+catkin_make_isolated --use-ninja
+
+# Build specified package
+catkin_make_isolated --pkg <pkg_name> --use-ninja
+
 # Source 
-source devel/setup.bash
+source devel_isolated/setup.bash
 ```
 
 To properly load the gazebo world, you will need to have the necessary model files in the `~/.gazebo/models/` directory.
@@ -72,15 +91,15 @@ To properly load the gazebo world, you will need to have the necessary model fil
 There are two sources of models needed:
 
 * [Gazebo official models](https://github.com/osrf/gazebo_models)
-  
+
   ```bash
   # Create the destination directory
   cd
   mkdir -p .gazebo/models
-
+  
   # Clone the official gazebo models repo (assuming home here `~/`)
   git clone https://github.com/osrf/gazebo_models.git
-
+  
   # Copy the models into the `~/.gazebo/models` directory
   cp -r ~/gazebo_models/* ~/.gazebo/models
   ```
@@ -99,54 +118,22 @@ There are two sources of models needed:
 This command will launch the gazebo with the project world
 
 ```bash
-# Launch Gazebo World together with our robot
-roslaunch me5413_world world.launch
+# Launch Gazebo World together with our robot, you can change any sensor you want in this shell
+roscd me5413_bringup/shell
+sh start.sh
 ```
 
-### 1. Manual Control
+Here, manual teleoperation is automatically load, default input is Xbox joystick .
 
-If you wish to explore the gazebo world a bit, we provide you a way to manually control the robot around:
-
-```bash
-# Only launch the robot keyboard teleop control
-roslaunch me5413_world manual.launch
-```
-
-**Note:** This robot keyboard teleop control is also included in all other launch files, so you don't need to launch this when you do mapping or navigation.
-
-![rviz_manual_image](src/me5413_world/media/rviz_manual.png)
-
-### 2. Mapping
+### 1. Bringup all
 
 After launching **Step 0**, in the second terminal:
 
 ```bash
-# Launch GMapping
-roslaunch me5413_world mapping.launch
+roslaunch me5413_bringup bringup.launch slam_method:=cartographer
 ```
-
-After finishing mapping, run the following command in the thrid terminal to save the map:
-
+This command will bringup the whole pipeline, including cartographer, navigation, schedule and perception.
 ```bash
-# Save the map as `my_map` in the `maps/` folder
-roscd me5413_world/maps/
-rosrun map_server map_saver -f my_map map:=/map
-```
-
-![rviz_nmapping_image](src/me5413_world/media/rviz_mapping.png)
-
-### 3. Navigation
-
-Once completed **Step 2** mapping and saved your map, quit the mapping process.
-
-Then, in the second terminal:
-
-```bash
-# Load a map and launch AMCL localizer
-roslaunch me5413_world navigation.launch
-```
-
-![rviz_navigation_image](src/me5413_world/media/rviz_navigation.png)
 
 ## Student Tasks
 
@@ -163,10 +150,11 @@ roslaunch me5413_world navigation.launch
 ### 2. Using your own map, navigate your robot
 
 * We have provided you a GUI in RVIZ that allows you to click and generate/clear the random objects in the gazebo world:
-  
-  ![rviz_panel_image](src/me5413_world/media/control_panel.png)
+
+  ![rviz_panel_image](media/control_panel.png)
 
 * From the starting point, move to one of the four given destination boxes at the end of the map:
+
   * Count the number of occurance of each type of box (e.g. box 1, 2, 3, 4, the box numbers are randomly generated)
   * Cross the bridge (the location of the bridge is randomly generated)
   * Unlock the blockade on the bridge by publishing a `true` message (`std_msgs/Bool`) to the `/cmd_open_bridge` topic
