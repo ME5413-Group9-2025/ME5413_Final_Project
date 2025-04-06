@@ -1,0 +1,18 @@
+[submodule "src/me5413_bringup"]
+	path = src/me5413_bringup
+	url = https://github.com/ME5413-Group9-2025/me5413_bringup.git
+[submodule "src/me5413_perception"]
+	path = src/me5413_perception
+	url = https://github.com/ME5413-Group9-2025/me5413_perception.git
+[submodule "src/navigation"]
+	path = src/navigation
+	url = https://github.com/ME5413-Group9-2025/navigation.git
+[submodule "src/teb_local_planner"]
+	path = src/teb_local_planner
+	url = https://github.com/ME5413-Group9-2025/teb_local_planner.git
+[submodule "src/cartographer"]
+	path = src/cartographer
+	url = https://github.com/cartographer-project/cartographer.git
+[submodule "src/cartographer_ros"]
+	path = src/cartographer_ros
+	url = https://github.com/cartographer-project/cartographer_ros.git
