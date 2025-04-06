@@ -9,7 +9,7 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
 ![C++](https://img.shields.io/badge/Code-C++-informational?style=flat&logo=c%2B%2B&logoColor=white&color=2bbc8a)
 ![Python](https://img.shields.io/badge/Code-Python-informational?style=flat&logo=Python&logoColor=white&color=2bbc8a)
 
-![cover_image](media/gz_world.png)
+![cover_image](src/me5413_world/media/gz_world.png)
 
 ## Dependencies
 
@@ -133,7 +133,6 @@ After launching **Step 0**, in the second terminal:
 roslaunch me5413_bringup bringup.launch slam_method:=cartographer
 ```
 This command will bringup the whole pipeline, including cartographer, navigation, schedule and perception.
-```bash
 
 ## Student Tasks
 
@@ -151,7 +150,7 @@ This command will bringup the whole pipeline, including cartographer, navigation
 
 * We have provided you a GUI in RVIZ that allows you to click and generate/clear the random objects in the gazebo world:
 
-  ![rviz_panel_image](media/control_panel.png)
+  ![rviz_panel_image](src/me5413_world/media/control_panel.png)
 
 * From the starting point, move to one of the four given destination boxes at the end of the map:
 
